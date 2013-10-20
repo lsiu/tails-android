@@ -4,15 +4,29 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:baselineAligned="false"
-    android:padding="5dp"
     android:orientation="vertical"
+    android:padding="5dp"
     tools:context=".MainActivity" >
 
-    <Button
-        android:id="@+id/scan_qr"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/scan_qr" />
+        android:gravity="center|top">
+        
+        <Button
+            android:id="@+id/scan_qr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_qr" 
+            style="?android:attr/button"/>
+        
+        <Button
+            android:id="@+id/add_dog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_pet"
+            style="?android:attr/button"/>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/pet_list_view"

@@ -11,7 +11,7 @@ public class Pet {
 	// base64 encoded;
 	private String image;
 	
-	private Date creationTime;
+//	private Date creationTime;
 	
 	public Pet(String name) {
 		this.name = name;
@@ -41,12 +41,12 @@ public class Pet {
 		this.image = image;
 	}
 
-	public Date getCreationTime() {
-		return creationTime;
-	}
-
-	public void setCreationTime(Date creationTime) {
-		this.creationTime = creationTime;
-	}
+//	public Date getCreationTime() {
+//		return creationTime;
+//	}
+//
+//	public void setCreationTime(Date creationTime) {
+//		this.creationTime = creationTime;
+//	}
 
 }

@@ -7,9 +7,7 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
-    <instrumentation android:label="Tails" android:name="android.test.InstrumentationTestRunner" android:targetPackage="com.github.lsiu.tails"></instrumentation>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <instrumentation android:name="android.test.InstrumentationTestRunner" android:targetPackage="com.github.lsiu.tails"></instrumentation>
 
     <application
         android:allowBackup="true"

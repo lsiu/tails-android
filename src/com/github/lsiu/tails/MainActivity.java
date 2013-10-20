@@ -1,18 +1,14 @@
 package com.github.lsiu.tails;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.json.JSONObject;
+import org.apache.http.client.ClientProtocolException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +21,7 @@ import android.widget.ListView;
 import com.github.lsiu.tails.model.Pet;
 import com.github.lsiu.tails.qr.IntentIntegrator;
 import com.github.lsiu.tails.qr.IntentResult;
+import com.github.lsiu.tails.util.PetUtil;
 
 public class MainActivity extends Activity {
 
@@ -34,15 +31,34 @@ public class MainActivity extends Activity {
 
 		setContentView(R.layout.activity_main);
 
-		List<Pet> petList = new ArrayList<Pet>();
-		petList.add(new Pet("Paul Neil"));
-		petList.add(new Pet("Kelvin Chu"));
-		petList.add(new Pet("Leonard Siu"));
-
 		final ListView listView = (ListView) findViewById(R.id.pet_list_view);
+		
+		AsyncTask<String, Void, List<Pet>> getPets = new AsyncTask<String, Void, List<Pet>>() {
+			@Override
+			protected List<Pet> doInBackground(String... url) {
+				List<Pet> petList;
+				try {
+					petList = PetUtil.getPets();
+				} catch (ClientProtocolException e) {
+					petList = new ArrayList<Pet>();
+					petList.add(new Pet("Error:" + e.getMessage()));
+					Log.e("get-pets", e.getMessage(), e);
+				} catch (IOException e) {
+					petList = new ArrayList<Pet>();
+					petList.add(new Pet("Error" + e.getMessage()));
+					Log.e("get-pets", e.getMessage(), e);
+				}
+				return petList;
+			}
+			@Override
+			protected void onPostExecute(List<Pet> result) {
+				listView.setAdapter(new PetArrayAdapter(MainActivity.this,
+						R.layout.activity_list_pet, result.toArray(new Pet[0])));
+			}
+		};
+		
+		getPets.execute();
 
-		listView.setAdapter(new PetArrayAdapter(this,
-				R.layout.activity_list_pet, petList.toArray(new Pet[0])));
 		listView.setTextFilterEnabled(true);
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -79,35 +95,4 @@ public class MainActivity extends Activity {
 			Log.d("Scan Result", "Scan Result: " + scanResult.getContents());
 		}
 	}
-	
-	static List<Pet> getPets() {
-		DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-		HttpGet get = new HttpGet("http://tails-lsiu.rhcloud.com/mockjson/list.json");
-		get.setHeader("Content-Type", "application/json");
-		
-		InputStream inputStream = null;
-		String result = null;
-		try {
-		    HttpResponse response = httpclient.execute(get);           
-		    HttpEntity entity = response.getEntity();
-		    
-		    long length = entity.getContentLength();
-		    
-		    inputStream = entity.getContent();
-		    
-		    byte[] buf = new byte[(int)length];
-		    int byteRead = inputStream.read(buf);
-		    JSONObject o = new JSONObject(new String(buf, "UTF-8"));
-		    
-		    Log.d("return-json", String.valueOf(o));
-		} catch (Exception e) { 
-		    // Oops
-		}
-		finally {
-		    try{if(inputStream != null)inputStream.close();}catch(Exception squish){}
-		}
-		
-		return null;
-	}
-
 }

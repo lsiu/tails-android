@@ -3,6 +3,9 @@ package com.github.lsiu.tails;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +53,11 @@ public class PetArrayAdapter extends ArrayAdapter<Pet> {
 		TextView textView = (TextView) rowView.findViewById(R.id.label);
 		ImageView imageView = (ImageView) rowView.findViewById(R.id.logo);
 		
-		textView.setText(this.getItem(position).getName());
-		imageView.setImageResource(R.drawable.ic_launcher);
+		Pet p = getItem(position);
+		textView.setText(p.getName());
+		byte[] image = Base64.decode(p.getImage(), Base64.DEFAULT);
+		Bitmap bitMap = BitmapFactory.decodeByteArray(image, 0, image.length);
+		imageView.setImageBitmap(bitMap);
 
 		return rowView;
 	}
